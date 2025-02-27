@@ -54,12 +54,16 @@ public class Snowflake
     private VertexPositionColorNormal[] vertices = [];
 
     public Vector3 position;
-    public Quaternion rotation;
+    public float rotationX;
+    public float rotationY;
 
-    public Snowflake(int width, int height, float constantAdd, float backgroundValue, float alpha, Vector3 position, Quaternion rotation) 
+    public Snowflake(int width, int height, float constantAdd, float backgroundValue, float alpha, Vector3 position, float rotationX, float rotationY) 
     {
         this.width = width + 2; // account for boundary edge
         this.height = height + 2;
+
+        this.rotationX = rotationX;
+        this.rotationY = rotationY;
 
         this.random = new Random(DateTime.Now.Millisecond);
         
@@ -93,7 +97,9 @@ public class Snowflake
 
     public Snowflake(int width, int height)
     {
-        this.rotation = Quaternion.Identity;
+        this.rotationX = 0f;
+        this.rotationY = 0f;
+        
         this.position = Vector3.Zero;
 
         this.width = width + 2; // account for boundary edge

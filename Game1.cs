@@ -81,7 +81,7 @@ public class Game1 : Game
 
         basicEffect.EnableDefaultLighting();
 
-        snowflake = new Snowflake(400, 400, 4.8448797E-05f, 0.65644354f, 1.6405386f, Vector3.Zero, Quaternion.Identity);
+        snowflake = new Snowflake(400, 400, 4.8448797E-05f, 0.65644354f, 1.6405386f, Vector3.Zero, 0f, 0f);
 
         int times = 100;
         for (int j = 0; j < times; ++j)
@@ -201,8 +201,10 @@ public class Game1 : Game
         {
             nDown = false;
         }
-    
-        snowflake.rotation *= Quaternion.CreateFromAxisAngle(Vector3.Up, dt * 20f);
+
+        snowflake.position.Y -= 0.0f * dt;
+        snowflake.rotationX += dt;
+        snowflake.rotationY += dt * 0.3f;
 
         base.Update(gameTime);
     }
@@ -229,16 +231,8 @@ public class Game1 : Game
 
         basicEffect.View = camera.view_matrix; //camera projections
         basicEffect.Projection = camera.projection_matrix;
-        basicEffect.World = Matrix.Identity;
 
-        foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-        {
-            pass.Apply();
-
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, origin_axii_lines, 0, 3);
-        }
-
-        basicEffect.World = Matrix.CreateScale(0.1f) * Matrix.CreateTranslation(Vector3.Forward * 4) * Matrix.CreateFromQuaternion(snowflake.rotation);
+        basicEffect.World = Matrix.CreateScale(0.1f) * Matrix.CreateFromYawPitchRoll(snowflake.rotationY, snowflake.rotationX, 0f) * Matrix.CreateTranslation(snowflake.position);
         snowflake.draw(basicEffect, GraphicsDevice);
         
         setScreenText();
@@ -251,6 +245,14 @@ public class Game1 : Game
             {
                 _spriteBatch.DrawString(font, screenText[x/pixelsPerChar + y/pixelsPerChar * textWidth], new Vector2(x, y), random.NextDouble() > 0.98f ? Color.White : Color.PowderBlue, 0, Vector2.Zero, scale: 0.3f, SpriteEffects.None, 0.0f);
             }
+        }
+
+        basicEffect.World = Matrix.Identity;
+        foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+        {
+            pass.Apply();
+
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, origin_axii_lines, 0, 3);
         }
         
         Color frameRateColor = Color.Green;
@@ -268,11 +270,14 @@ public class Game1 : Game
         
         GraphicsDevice.GetBackBufferData<Color>(screenColors);
         
+        float brightness;
+
         for (int x = 0; x < screen_x - pixelsPerChar; x+=pixelsPerChar)
         {
             for (int y = 0; y < screen_y - pixelsPerChar; y+=pixelsPerChar)
             {
-                float brightness = screenColors[x + y * screen_x].R; // maxBrightness(x, x + pixelsPerChar - 1, y, y + pixelsPerChar - 1, screenColors);
+                //brightness = screenColors[x + y * screen_x].R;
+                brightness = avgBrightness(x, x + pixelsPerChar - 1, y, y + pixelsPerChar - 1, screenColors);
 
                 if(brightness > 255f) { brightness = 255f;}
                 if(brightness < 0f) { brightness = 0f;}
