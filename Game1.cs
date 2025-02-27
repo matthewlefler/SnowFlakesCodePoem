@@ -29,12 +29,54 @@ public class Game1 : Game
         new VertexPositionColorNormal(Vector3.Zero, Color.Blue, Vector3.One),
     };
 
+    private const float top = 10f;
+    VertexPositionColorNormal[] box = new VertexPositionColorNormal[]
+    {
+        // bottom square
+        new VertexPositionColorNormal(new Vector3(-0.5f,0f,-0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(0.5f,0f,-0.5f), Color.White, Vector3.One),
+        
+        new VertexPositionColorNormal(new Vector3(0.5f,0f,-0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(0.5f,0f,0.5f), Color.White, Vector3.One),
+        
+        new VertexPositionColorNormal(new Vector3(0.5f,0f,0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(-0.5f,0f,0.5f), Color.White, Vector3.One),
+
+        new VertexPositionColorNormal(new Vector3(-0.5f,0f,0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(-0.5f,0f,-0.5f), Color.White, Vector3.One),
+
+        // vertical lines
+        new VertexPositionColorNormal(new Vector3(-0.5f,0f,-0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(-0.5f,top,-0.5f), Color.White, Vector3.One),
+        
+        new VertexPositionColorNormal(new Vector3(0.5f,0f,-0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(0.5f,top,-0.5f), Color.White, Vector3.One),
+
+        new VertexPositionColorNormal(new Vector3(-0.5f,0f,0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(-0.5f,top,0.5f), Color.White, Vector3.One),
+
+        new VertexPositionColorNormal(new Vector3(0.5f,0f,0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(0.5f,top,0.5f), Color.White, Vector3.One),
+
+        // top square
+        new VertexPositionColorNormal(new Vector3(-0.5f,top,-0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(0.5f,top,-0.5f), Color.White, Vector3.One),
+        
+        new VertexPositionColorNormal(new Vector3(0.5f,top,-0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(0.5f,top,0.5f), Color.White, Vector3.One),
+        
+        new VertexPositionColorNormal(new Vector3(0.5f,top,0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(-0.5f,top,0.5f), Color.White, Vector3.One),
+
+        new VertexPositionColorNormal(new Vector3(-0.5f,top,0.5f), Color.White, Vector3.One),
+        new VertexPositionColorNormal(new Vector3(-0.5f,top,-0.5f), Color.White, Vector3.One),
+    };
+
     private SpriteFont font;
 
     private SimpleCamera camera;
 
-    private Snowflake snowflake;
-    private float limit = 1.0f;
+    private Snowflakes snowflakes = new Snowflakes(20);
 
     private const string snow = " ftwzdcbae";
     private Random random = new Random(0);
@@ -80,18 +122,6 @@ public class Game1 : Game
         basicEffect.VertexColorEnabled = true;
 
         basicEffect.EnableDefaultLighting();
-
-        snowflake = new Snowflake(400, 400, 4.8448797E-05f, 0.65644354f, 1.6405386f, Vector3.Zero, 0f, 0f);
-
-        int times = 100;
-        for (int j = 0; j < times; ++j)
-        {
-            for(int i = 0; i < 10; ++i) {
-                snowflake.tick();
-            }
-            if(snowflake.filled()) { break; }
-        }
-        snowflake.calcVerts();
 
         base.Initialize();
         Console.WriteLine("Initialization done");
@@ -169,42 +199,10 @@ public class Game1 : Game
             camera.speed = 1f;
         }
 
-        if(keyboard.IsKeyDown(Keys.OemOpenBrackets))
-        {
-            limit += 0.01f;
-            snowflake.calcVerts(limit);
-        }
-        if(keyboard.IsKeyDown(Keys.OemCloseBrackets))
-        {
-            limit -= 0.01f;
-            if(limit < 0f) { limit = 0f; }
-            snowflake.calcVerts(limit);
-        }
-
         camera.Rotate((screen_middle.X - mouse.X) * dt * 0.2f, (screen_middle.Y - mouse.Y) * dt * 0.2f);
 
-        // TODO: Add your update logic here
-        if(keyboard.IsKeyDown(Keys.Space))
-        {
-            snowflake.tick();
-            snowflake.calcVerts(limit);
-        }
-
-        if(keyboard.IsKeyDown(Keys.N)) {
-            if(!nDown) {
-                snowflake = new Snowflake(400, 400);
-                snowflake.calcVerts();
-            }
-            nDown = true;
-        }
-        else
-        {
-            nDown = false;
-        }
-
-        snowflake.position.Y -= 0.0f * dt;
-        snowflake.rotationX += dt;
-        snowflake.rotationY += dt * 0.3f;
+        snowflakes.falling(dt);
+        snowflakes.growing();
 
         base.Update(gameTime);
     }
@@ -232,8 +230,7 @@ public class Game1 : Game
         basicEffect.View = camera.view_matrix; //camera projections
         basicEffect.Projection = camera.projection_matrix;
 
-        basicEffect.World = Matrix.CreateScale(0.1f) * Matrix.CreateFromYawPitchRoll(snowflake.rotationY, snowflake.rotationX, 0f) * Matrix.CreateTranslation(snowflake.position);
-        snowflake.draw(basicEffect, GraphicsDevice);
+        snowflakes.draw(basicEffect, GraphicsDevice);
         
         setScreenText();
 
@@ -255,6 +252,14 @@ public class Game1 : Game
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, origin_axii_lines, 0, 3);
         }
         
+        basicEffect.World = Matrix.Identity;
+        foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+        {
+            pass.Apply();
+
+            GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, box, 0, box.Length / 2);
+        }
+
         Color frameRateColor = Color.Green;
         if(frame_rate < 50) { frameRateColor = Color.Yellow; }
         if(frame_rate < 40) { frameRateColor = Color.Red; }
@@ -276,8 +281,8 @@ public class Game1 : Game
         {
             for (int y = 0; y < screen_y - pixelsPerChar; y+=pixelsPerChar)
             {
-                //brightness = screenColors[x + y * screen_x].R;
-                brightness = avgBrightness(x, x + pixelsPerChar - 1, y, y + pixelsPerChar - 1, screenColors);
+                brightness = screenColors[x + y * screen_x].R;
+                //brightness = avgBrightness(x, x + pixelsPerChar - 1, y, y + pixelsPerChar - 1, screenColors);
 
                 if(brightness > 255f) { brightness = 255f;}
                 if(brightness < 0f) { brightness = 0f;}
