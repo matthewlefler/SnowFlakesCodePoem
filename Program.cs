@@ -1,2 +1,2 @@
-﻿using var game = new SnowFlakesCodePoem.Game1();
+﻿using var game = new SnowFlakesCodePoem.Snow();
 game.Run();

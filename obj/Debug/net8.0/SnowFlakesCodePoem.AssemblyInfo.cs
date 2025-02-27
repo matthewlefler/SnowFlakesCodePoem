@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SnowFlakesCodePoem")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2b6653291082a6882dab5056792ae6ddf61e8685")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2e786a1bac9d2cbff7721da6bcb6b4a0b32e0feb")]
 [assembly: System.Reflection.AssemblyProductAttribute("SnowFlakesCodePoem")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SnowFlakesCodePoem")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

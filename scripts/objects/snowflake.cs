@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -34,6 +36,9 @@ public class Snowflake
     private float[,] hexagons;
     private float[,] receptive;
     private float[,] nonReceptive;
+
+    private bool[,] is_receptive;
+
     private int width;
     private int height;
 
@@ -55,7 +60,10 @@ public class Snowflake
     public float rotationX;
     public float rotationY;
 
-    public Snowflake(int width, int height, float constantAdd, float backgroundValue, float alpha, Vector3 position, float rotationX, float rotationY) 
+    public float rotationdX;
+    public float rotationdY;
+
+    public Snowflake(int width, int height, float constantAdd, float backgroundValue, float alpha, Vector3 position, float rotationX, float rotationY, float rotationdX, float rotationdY) 
     {
         this.width = width + 2; // account for boundary edge
         this.height = height + 2;
@@ -63,16 +71,16 @@ public class Snowflake
         this.rotationX = rotationX;
         this.rotationY = rotationY;
 
+        this.rotationdX = rotationdX;
+        this.rotationdY = rotationdY;
+
         this.random = new Random(DateTime.Now.Millisecond);
         
         this.constantAdd = constantAdd;
         this.backgroundValue = backgroundValue;
-        this.alpha = alpha;
+        this.alpha = alpha;        
 
-        Console.WriteLine("constantAdd: " + constantAdd);
-        Console.WriteLine("backgroundValue: " + backgroundValue);
-        Console.WriteLine("alpha: " + alpha);
-        
+        this.position = position;
 
         inRadius = outRadius * (MathF.Sqrt(3)/2f);
         widthDistance = 3f/4f * outRadius;
@@ -89,7 +97,9 @@ public class Snowflake
         hexagons[width / 2, height / 2] = 1.0f;
 
         receptive = (float[,])hexagons.Clone();
-        nonReceptive = (float[,])hexagons.Clone();    
+        nonReceptive = (float[,])hexagons.Clone();  
+
+        is_receptive = new bool[width, height];  
 
     }
 
@@ -98,6 +108,9 @@ public class Snowflake
         this.rotationX = 0f;
         this.rotationY = 0f;
 
+        this.rotationdX = 0f;
+        this.rotationdY = 0f;
+
         this.position = Vector3.Zero;
 
         this.width = width + 2; // account for boundary edge
@@ -105,13 +118,9 @@ public class Snowflake
 
         this.random = new Random(DateTime.Now.Millisecond);
         
-        this.constantAdd = random.NextSingle() / 7f;
-        this.backgroundValue = random.NextSingle();
-        this.alpha = random.NextSingle() * 2f;
-        
-        Console.WriteLine("constantAdd: " + constantAdd);
-        Console.WriteLine("backgroundValue: " + backgroundValue);
-        Console.WriteLine("alpha: " + alpha);
+        this.constantAdd     = random.NextSingle() / 10f;
+        this.backgroundValue = (random.NextSingle() * 0.4f) + 0.3f;
+        this.alpha           = 0.9f * (random.NextSingle() + 1.5f);
 
         inRadius = outRadius * (MathF.Sqrt(3)/2f);
         widthDistance = 3f/4f * outRadius;
@@ -122,13 +131,19 @@ public class Snowflake
         {
             for (int y = 0; y < height; y++)
             {
-                hexagons[x, y] = backgroundValue + ((random.Next(10) / 10 - 0.5f) / 3f);
+                hexagons[x, y] = backgroundValue + (random.NextSingle() - 0.5f) / 30;
             }
         }
         hexagons[width / 2, height / 2] = 1.0f;
 
         receptive = (float[,])hexagons.Clone();
         nonReceptive = (float[,])hexagons.Clone();        
+
+        is_receptive = new bool[this.width, this.height];  
+    }
+
+    public Snowflake() : this(300, 300)
+    {
 
     }
 
@@ -140,46 +155,50 @@ public class Snowflake
     
     public void tick()
     {
-        bool[,] is_receptive = new bool[width, height];
         for(int x = 1; x < width - 1; ++x) 
         {
             for (int y = 1; y < height - 1; ++y)
             {
-                receptive[x, y] = 0f;
-                nonReceptive[x, y] = 0f;
-                /*      ___
-                 *  ___/ 0 \___
-                 * / 5 \___/ 1 \  
-                 * \___/   \___/ 
-                 * / 4 \___/ 2 \   
-                 * \___/ 3 \___/  
-                 *     \___/
-                */
-                if(hexagons[x, y] >= 1.0f) {
-                    is_receptive[x, y] = true;
-
-                    is_receptive[x, y + 1] = true; // 0
-                    is_receptive[x, y - 1] = true; // 3
-                    
-                    if(x % 2 == 0) 
-                    {
-                        is_receptive[x + 1, y + 1] = true; // 1
-                        is_receptive[x + 1, y] = true;     // 2
-                        is_receptive[x - 1, y] = true;     // 4
-                        is_receptive[x - 1, y + 1] = true; // 5
-                    } 
-                    else
-                    {
-                        is_receptive[x + 1, y] = true;     // 1
-                        is_receptive[x + 1, y - 1] = true; // 2
-                        is_receptive[x - 1, y - 1] = true; // 4
-                        is_receptive[x - 1, y] = true;     // 5
-                    }
-                }
-                               
-
+                is_receptive[x, y] = false;
             }
         }
+
+        Parallel.For(0, (width - 2) * (height - 2), index => {
+            int x = (index % (width - 2)) + 1;
+            int y = (index / (width - 2)) + 1;
+
+            receptive[x, y] = 0f;
+            nonReceptive[x, y] = 0f;
+            /*      ___
+             *  ___/ 0 \___
+             * / 5 \___/ 1 \  
+             * \___/   \___/ 
+             * / 4 \___/ 2 \   
+             * \___/ 3 \___/  
+             *     \___/
+            */
+            if(hexagons[x, y] >= 1.0f) {
+                is_receptive[x, y] = true;
+
+                is_receptive[x, y + 1] = true; // 0
+                is_receptive[x, y - 1] = true; // 3
+                
+                if(x % 2 == 0) 
+                {
+                    is_receptive[x + 1, y + 1] = true; // 1
+                    is_receptive[x + 1, y] = true;     // 2
+                    is_receptive[x - 1, y] = true;     // 4
+                    is_receptive[x - 1, y + 1] = true; // 5
+                } 
+                else
+                {
+                    is_receptive[x + 1, y] = true;     // 1
+                    is_receptive[x + 1, y - 1] = true; // 2
+                    is_receptive[x - 1, y - 1] = true; // 4
+                    is_receptive[x - 1, y] = true;     // 5
+                }
+            }
+        });
 
         for(int x = 1; x < width - 1; ++x) 
         {
@@ -210,50 +229,51 @@ public class Snowflake
 
     private float[,] avgHexGrid(float[,] grid) 
     {
-        float[,] temp_grid = (float[,]) grid.Clone();
+        float[,] temp_grid = new float[width,height];
 
-        float neighbor0; 
-        float neighbor1; 
-        float neighbor2; 
-        float neighbor3; 
-        float neighbor4; 
-        float neighbor5; 
+        Parallel.For(0, (width - 2) * (height - 2), index => {
+            int x = (index % (width - 2)) + 1;
+            int y = (index / (width - 2)) + 1;
+            /*      ___
+             *  ___/ 0 \___
+             * / 5 \___/ 1 \  
+             * \___/   \___/ 
+             * / 4 \___/ 2 \   
+             * \___/ 3 \___/  
+             *     \___/
+            */
 
-        for(int x = 1; x < width - 1; x++) 
-        {
-            for (int y = 1; y < height - 1; y++)
+            float neighbor0; 
+            float neighbor1; 
+            float neighbor2; 
+            float neighbor3; 
+            float neighbor4; 
+            float neighbor5; 
+
+
+            neighbor0 = grid[x, y + 1];                        
+            neighbor3 = grid[x, y - 1];   
+
+            if(x % 2 == 0) 
             {
-                /*      ___
-                 *  ___/ 0 \___
-                 * / 5 \___/ 1 \  
-                 * \___/   \___/ 
-                 * / 4 \___/ 2 \   
-                 * \___/ 3 \___/  
-                 *     \___/
-                */
-                neighbor0 = grid[x, y + 1];                        
-                neighbor3 = grid[x, y - 1];    
-
-                if(x % 2 == 0) 
-                {
-                    neighbor1 = grid[x + 1, y + 1];
-                    neighbor2 = grid[x + 1, y];    
-                    neighbor4 = grid[x - 1, y];    
-                    neighbor5 = grid[x - 1, y + 1];
-                } 
-                else
-                {
-                    neighbor1 = grid[x + 1, y];     
-                    neighbor2 = grid[x + 1, y - 1]; 
-                    neighbor4 = grid[x - 1, y - 1]; 
-                    neighbor5 = grid[x - 1, y];     
-                }
-
-                float weight = alpha/12f;
-                temp_grid[x,y] = (1 - (alpha * 0.5f)) * grid[x,y];
-                temp_grid[x,y] += weight * (neighbor0 + neighbor1 + neighbor2 + neighbor3 + neighbor4 + neighbor5);
+                neighbor1 = grid[x + 1, y + 1];
+                neighbor2 = grid[x + 1, y];    
+                neighbor4 = grid[x - 1, y];    
+                neighbor5 = grid[x - 1, y + 1];
+            } 
+            else
+            {
+                neighbor1 = grid[x + 1, y];     
+                neighbor2 = grid[x + 1, y - 1]; 
+                neighbor4 = grid[x - 1, y - 1]; 
+                neighbor5 = grid[x - 1, y];     
             }
-        }
+
+            float weight = alpha/12f;
+            temp_grid[x,y] = (1 - (alpha * 0.5f)) * grid[x,y];
+            temp_grid[x,y] += weight * (neighbor0 + neighbor1 + neighbor2 + neighbor3 + neighbor4 + neighbor5);
+        });
+
         return temp_grid;
     }
 

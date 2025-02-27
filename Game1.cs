@@ -8,82 +8,28 @@ using objects;
 
 namespace SnowFlakesCodePoem;
 
-public class Game1 : Game
+public class ing : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
     private int screen_x;
     private int screen_y;
-    Point screen_middle;
-
-    VertexPositionColorNormal[] origin_axii_lines = new VertexPositionColorNormal[]
-    {
-        new VertexPositionColorNormal(Vector3.Up, Color.Red, Vector3.One),
-        new VertexPositionColorNormal(Vector3.Zero, Color.Red, Vector3.One),
-        
-        new VertexPositionColorNormal(Vector3.Right, Color.Green, Vector3.One),
-        new VertexPositionColorNormal(Vector3.Zero, Color.Green, Vector3.One),
-        
-        new VertexPositionColorNormal(Vector3.Forward, Color.Blue, Vector3.One),
-        new VertexPositionColorNormal(Vector3.Zero, Color.Blue, Vector3.One),
-    };
-
-    private const float top = 10f;
-    VertexPositionColorNormal[] box = new VertexPositionColorNormal[]
-    {
-        // bottom square
-        new VertexPositionColorNormal(new Vector3(-0.5f,0f,-0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(0.5f,0f,-0.5f), Color.White, Vector3.One),
-        
-        new VertexPositionColorNormal(new Vector3(0.5f,0f,-0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(0.5f,0f,0.5f), Color.White, Vector3.One),
-        
-        new VertexPositionColorNormal(new Vector3(0.5f,0f,0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(-0.5f,0f,0.5f), Color.White, Vector3.One),
-
-        new VertexPositionColorNormal(new Vector3(-0.5f,0f,0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(-0.5f,0f,-0.5f), Color.White, Vector3.One),
-
-        // vertical lines
-        new VertexPositionColorNormal(new Vector3(-0.5f,0f,-0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(-0.5f,top,-0.5f), Color.White, Vector3.One),
-        
-        new VertexPositionColorNormal(new Vector3(0.5f,0f,-0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(0.5f,top,-0.5f), Color.White, Vector3.One),
-
-        new VertexPositionColorNormal(new Vector3(-0.5f,0f,0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(-0.5f,top,0.5f), Color.White, Vector3.One),
-
-        new VertexPositionColorNormal(new Vector3(0.5f,0f,0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(0.5f,top,0.5f), Color.White, Vector3.One),
-
-        // top square
-        new VertexPositionColorNormal(new Vector3(-0.5f,top,-0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(0.5f,top,-0.5f), Color.White, Vector3.One),
-        
-        new VertexPositionColorNormal(new Vector3(0.5f,top,-0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(0.5f,top,0.5f), Color.White, Vector3.One),
-        
-        new VertexPositionColorNormal(new Vector3(0.5f,top,0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(-0.5f,top,0.5f), Color.White, Vector3.One),
-
-        new VertexPositionColorNormal(new Vector3(-0.5f,top,0.5f), Color.White, Vector3.One),
-        new VertexPositionColorNormal(new Vector3(-0.5f,top,-0.5f), Color.White, Vector3.One),
-    };
 
     private SpriteFont font;
 
     private SimpleCamera camera;
 
-    private Snowflakes snowflakes = new Snowflakes(20);
+    protected Snowflakes snowflakes;
 
     private const string snow = " ftwzdcbae";
     private Random random = new Random(0);
 
     private BasicEffect basicEffect;
 
-    public Game1()
+    protected float timeCounted = 0f;
+
+    public ing()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
@@ -99,13 +45,12 @@ public class Game1 : Game
         screen_x = _graphics.PreferredBackBufferWidth;
         screen_y = _graphics.PreferredBackBufferHeight;
     
-        screen_middle = new Point(screen_x / 2, screen_y / 2);
-
         Console.WriteLine("screen width: " + screen_x + " screen height: " + screen_y);
 
         // TODO: Add your initialization logic here
 
-        camera = new SimpleCamera(Vector3.Backward * 3);
+        camera = new SimpleCamera(Vector3.Up);
+        camera.Rotate(0, MathF.PI/2f);
 
         textHeight = screen_y/pixelsPerChar;
         textWidth = screen_x/pixelsPerChar;
@@ -121,7 +66,12 @@ public class Game1 : Game
         // The following MUST be enabled if you want to color your vertices
         basicEffect.VertexColorEnabled = true;
 
-        basicEffect.EnableDefaultLighting();
+        basicEffect.LightingEnabled = true;
+        basicEffect.DirectionalLight0.DiffuseColor = new Vector3(1f, 1f, 0.8f); // a light yellow light
+        basicEffect.DirectionalLight0.Direction = new Vector3(0, 1, 0);  // coming along the y-axis
+        basicEffect.DirectionalLight0.SpecularColor = new Vector3(1f, 1f, 1f); // with white highlights
+
+        basicEffect.DirectionalLight0.Enabled = true;
 
         base.Initialize();
         Console.WriteLine("Initialization done");
@@ -140,72 +90,20 @@ public class Game1 : Game
 
 
 
+    protected float time = 0f;
 
-    float dt = 0; // delta time in seconds
-
-    bool nDown = false;
-
-    MouseState last_mouse = Mouse.GetState();
-    MouseState mouse = Mouse.GetState();
-    KeyboardState last_keyboard = Keyboard.GetState();
     KeyboardState keyboard = Keyboard.GetState();
     protected override void Update(GameTime gameTime)
     {
-        dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
-
-        last_keyboard = keyboard;
+        time = (float) gameTime.ElapsedGameTime.TotalSeconds;
         keyboard = Keyboard.GetState();
-        last_mouse = mouse;
-        mouse = Mouse.GetState();
-
-        Mouse.SetPosition(screen_middle.X, screen_middle.Y); // lock mouse to screen
 
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
         { Exit(); }
 
-        if(keyboard.IsKeyDown(Keys.W))
-        {
-            camera.Move(Vector3.Forward * dt);
-        }
-        if(keyboard.IsKeyDown(Keys.S))
-        {
-            camera.Move(Vector3.Backward * dt);
-        }
-
-        if(keyboard.IsKeyDown(Keys.A))
-        {
-            camera.Move(Vector3.Left * dt);
-        }
-        if(keyboard.IsKeyDown(Keys.D))
-        {
-            camera.Move(Vector3.Right * dt);
-        }
-
-        if(keyboard.IsKeyDown(Keys.Q))
-        {
-            camera.Move(Vector3.Down * dt);
-        }
-        if(keyboard.IsKeyDown(Keys.E))
-        {
-            camera.Move(Vector3.Up * dt);
-        }
-
-        if(keyboard.IsKeyDown(Keys.LeftShift))
-        {
-            camera.speed = 10f;
-        }
-        else
-        {
-            camera.speed = 1f;
-        }
-
-        camera.Rotate((screen_middle.X - mouse.X) * dt * 0.2f, (screen_middle.Y - mouse.Y) * dt * 0.2f);
-
-        snowflakes.falling(dt);
-        snowflakes.growing();
-
         base.Update(gameTime);
     }
+
 
 
 
@@ -214,6 +112,7 @@ public class Game1 : Game
     int pixelsPerChar = 5;
     int textHeight;
     int textWidth;
+
     protected override void Draw(GameTime gameTime)
     {
         double frame_rate = 1.0 / gameTime.ElapsedGameTime.TotalSeconds;
@@ -244,26 +143,10 @@ public class Game1 : Game
             }
         }
 
-        basicEffect.World = Matrix.Identity;
-        foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-        {
-            pass.Apply();
-
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, origin_axii_lines, 0, 3);
-        }
-        
-        basicEffect.World = Matrix.Identity;
-        foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-        {
-            pass.Apply();
-
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, box, 0, box.Length / 2);
-        }
-
         Color frameRateColor = Color.Green;
         if(frame_rate < 50) { frameRateColor = Color.Yellow; }
         if(frame_rate < 40) { frameRateColor = Color.Red; }
-        _spriteBatch.DrawString(font, frame_rate.ToString(), Vector2.One, frameRateColor, 0, Vector2.One, 0.8f, SpriteEffects.None, 0.0f);
+        _spriteBatch.DrawString(font, "a", Vector2.One, frameRateColor, 0, Vector2.One, 0.8f, SpriteEffects.None, 0.0f);
 
         _spriteBatch.End();
         base.Draw(gameTime);
