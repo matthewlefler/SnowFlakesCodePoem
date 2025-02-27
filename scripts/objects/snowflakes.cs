@@ -11,7 +11,7 @@ public class Snowflakes
     private Vector3 wind; // + gravity
     private Random random;
 
-    private float top = 20f;
+    private float top = 15f;
 
     public Snowflakes(int num) 
     {
@@ -21,7 +21,9 @@ public class Snowflakes
         snowflakes = new Snowflake[num];
         for (int i = 0; i < num; i++)
         {
-            snowflakes[i] = newSnowflake(i * (top / num) + (random.NextSingle() / 10f));
+            Snowflake flake = newSnowflake(i * (top / num) + (random.NextSingle() / 10f));
+            flake.active = false;
+            snowflakes[i] = flake;
         }
     }
 
@@ -79,7 +81,9 @@ public class Snowflakes
 
             if(snowflake.position.Y <= 0)
             {
-                snowflakes[i] = newSnowflake(top);
+                Snowflake f = newSnowflake(top);
+                f.active = snowflakes[i].active;
+                snowflakes[i] = f;
             }
         }
     }
@@ -110,7 +114,9 @@ public class Snowflakes
 
         for (int i = 0; i < names.Length; i++)
         {
-            temp[i + this.snowflakes.Length] = newSnowflake(top);
+            Snowflake f = newSnowflake(((float)i/(float)names.Length) * top);
+            f.active = true;
+            temp[i + this.snowflakes.Length] = f;
         }
 
         this.snowflakes = temp;

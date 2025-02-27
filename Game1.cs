@@ -143,10 +143,12 @@ public class ing : Game
             }
         }
 
-        Color frameRateColor = Color.Green;
-        if(frame_rate < 50) { frameRateColor = Color.Yellow; }
-        if(frame_rate < 40) { frameRateColor = Color.Red; }
-        _spriteBatch.DrawString(font, "a", Vector2.One, frameRateColor, 0, Vector2.One, 0.8f, SpriteEffects.None, 0.0f);
+        // Color frameRateColor = Color.Green;
+        // if(frame_rate < 50) { frameRateColor = Color.Yellow; }
+        // if(frame_rate < 40) { frameRateColor = Color.Red; }
+        // _spriteBatch.DrawString(font, "a", Vector2.One, frameRateColor, 0, Vector2.One, 0.8f, SpriteEffects.None, 0.0f);
+
+        
 
         _spriteBatch.End();
         base.Draw(gameTime);
@@ -164,8 +166,8 @@ public class ing : Game
         {
             for (int y = 0; y < screen_y - pixelsPerChar; y+=pixelsPerChar)
             {
-                brightness = screenColors[x + y * screen_x].R;
-                //brightness = avgBrightness(x, x + pixelsPerChar - 1, y, y + pixelsPerChar - 1, screenColors);
+                //brightness = screenColors[x + y * screen_x].R;
+                brightness = avgBrightness(x, x + pixelsPerChar - 1, y, y + pixelsPerChar - 1, screenColors);
 
                 if(brightness > 255f) { brightness = 255f;}
                 if(brightness < 0f) { brightness = 0f;}

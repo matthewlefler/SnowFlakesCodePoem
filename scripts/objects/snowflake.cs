@@ -63,6 +63,8 @@ public class Snowflake
     public float rotationdX;
     public float rotationdY;
 
+    public bool active = false;
+
     public Snowflake(int width, int height, float constantAdd, float backgroundValue, float alpha, Vector3 position, float rotationX, float rotationY, float rotationdX, float rotationdY) 
     {
         this.width = width + 2; // account for boundary edge
@@ -144,7 +146,7 @@ public class Snowflake
 
     public Snowflake() : this(300, 300)
     {
-
+        active = true;
     }
 
     private void addRandomSeed(int max) {
@@ -155,6 +157,8 @@ public class Snowflake
     
     public void tick()
     {
+        if(!active) { return; }
+        
         for(int x = 1; x < width - 1; ++x) 
         {
             for (int y = 1; y < height - 1; ++y)

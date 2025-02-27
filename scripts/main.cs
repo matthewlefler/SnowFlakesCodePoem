@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using objects;
 
@@ -9,7 +8,7 @@ public class Snow : ing
 {
     protected override void Initialize()
     {
-        snowflakes = /*a collection of*/ new Snowflakes();
+        snowflakes = /*a collection of*/ new Snowflakes(10);
 
         snowflakes.add([
             "one snowflake", 
