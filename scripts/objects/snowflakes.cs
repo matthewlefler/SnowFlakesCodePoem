@@ -1,5 +1,4 @@
 using System;
-using System.Data;
 using System.Numerics;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -24,12 +23,27 @@ class Snowflakes
         }
     }
 
-    public void update(float dt) 
+    public void falling(float dt) 
     {
         foreach(Snowflake snowflake in snowflakes) 
         {
-            snowflake.position += wind * dt;
+            snowflake.position += wind * dt * 0.1f;
+            
+            snowflake.rotationX += random.NextSingle() * dt;
+            snowflake.rotationY += random.NextSingle() * dt;
         }
+    }
+
+    public void growing() 
+    {
+        foreach(Snowflake snowflake in snowflakes) 
+        {
+            if(random.NextSingle() > 0.5f) 
+            {
+                snowflake.tick();
+            }
+        }
+
     }
 
     public void draw(BasicEffect effect, GraphicsDevice device)
