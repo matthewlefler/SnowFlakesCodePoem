@@ -1,41 +1,40 @@
+using System.ComponentModel;
 using Microsoft.Xna.Framework;
-using objects;
 
 namespace SnowFlakesCodePoem;
 
-
-public class Snow : ing
-{
-    protected override void Initialize()
-    {
-        snowflakes = /*a collection of*/ new Snowflakes(10);
-
-        snowflakes.add([
-            "one snowflake", 
-            "two snowflakes",
-            "three", "four", "five", "six", "seven", "eight", "nine", "..."]);
-
-        base.Initialize();
-    }
-
-    protected override void Update(GameTime gameTime)
-    {
-        snowflakes.falling(/*from above*/ time);// and time again
-        float timePassed = time;
-        timeCounted += timePassed;
-
-        /* looking and waiting */
-
-        snowflakes.growing(); /* and */        
-        snowflakes.floatingAndTumbling(/* while the */ time); // ticks down 
-        
-        /* all until the */snowflakes.hitTheGround();
-
-        /* looking and waiting */
-        // for that perfect snowflake
-
-        // and the loop repeats
-        base.Update(gameTime);
-    }
-}
-
+public class Snow : ing {
+protected override void sittingDownAtABench() {//and it started to snow        //
+/*           *        */snowflakes.counting([//     *          *       *       //
+/*    *             * */"one snowflake",// *           *                    *  //
+/*         *    *     */"two snowflakes",//      *           *     *           //
+/*  *         *    *  */"three", "four", "five", "six",//                      //
+/*        *           */"seven", "eight", "nine", "..."]);}//      *     *     //
+protected override void asThe(float timeLeft /*ticks down*/){//  *   *         //
+/*           *        */snowflakes.fall(//from above                *        * //
+//    *          *               *                       *                     //
+/*                      while the */ timeLeft /*ticks down*/);//     *         //
+//        *                    *                            *         *      * //
+//                *     looking and waiting    *      *          *             //
+//     *     *          as the                  *                              //
+/*                    */snowflakes.grow(); //      *              *        *   //
+//    *                 and as the       *                 *                   //
+/*       *        *   */snowflakes.floatAndTumble(// *           *          *  //
+// *         *                *               *             *                  //
+/*       *              while the */ timeLeft); // ticks down      *   *       //
+//                    *              *                                         //
+/*          *           all until the */snowflakes.hitTheGround();//  *        //
+//  *            *        *                                                 *  //
+//                 *    looking and waiting *       *         *                //
+//         *            for that perfect snowflake *                *          //
+//                             *                                               //
+//   *     *      *    * ||____________________||     *         *       *      //
+//                       ||____________________||                              //
+//      *                ||____________________||           *               *  //
+//   *           *      _||____________________||_    *           *            //
+//            *         |________________________|       *                     //
+//    *                 | | | |            | | | |                             //
+//                      | | |_|    *       |_| | |            *    *     *     //
+//       *     *        |_|   *           *    |_|       *      *              //
+/*_____________________________________________________________________________*/
+}}

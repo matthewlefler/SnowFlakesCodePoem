@@ -39,7 +39,7 @@ public class Snowflakes
     /// makes the snowflakes fall 
     /// </summary>
     /// <param name="dt"> delta time in seconds </param>
-    public void falling(float dt) 
+    public void fall(float dt) 
     {
         for(int i = 0; i < snowflakes.Length; i++) 
         {
@@ -58,7 +58,7 @@ public class Snowflakes
     /// rotates the snowflakes
     /// </summary>
     /// <param name="dt"> delta time in seconds </param>
-    public void floatingAndTumbling(float dt)
+    public void floatAndTumble(float dt)
     {
         for(int i = 0; i < snowflakes.Length; i++) 
         {
@@ -104,7 +104,7 @@ public class Snowflakes
         this.snowflakes = temp;
     }
 
-    public void add(String[] names) {
+    public void counting(String[] names) {
         Snowflake[] temp = new Snowflake[this.snowflakes.Length + names.Length];
         
         for (int i = 0; i < this.snowflakes.Length; i++)
@@ -150,7 +150,7 @@ public class Snowflakes
         return snowflake;
     }
 
-    public void growing() 
+    public void grow() 
     {
         foreach(Snowflake snowflake in snowflakes) 
         {

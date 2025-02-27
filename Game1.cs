@@ -20,7 +20,7 @@ public class ing : Game
 
     private SimpleCamera camera;
 
-    protected Snowflakes snowflakes;
+    protected Snowflakes snowflakes = new Snowflakes(10);
 
     private const string snow = " ftwzdcbae";
     private Random random = new Random(0);
@@ -36,8 +36,13 @@ public class ing : Game
         IsMouseVisible = false;
     }
 
+    protected virtual void sittingDownAtABench() { }
+    protected virtual void asThe(float time) { }
+
     protected override void Initialize()
     {
+        sittingDownAtABench();
+
         _graphics.PreferredBackBufferHeight = 1300;
         _graphics.PreferredBackBufferWidth = 1300;
         _graphics.ApplyChanges();
@@ -100,6 +105,8 @@ public class ing : Game
 
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboard.IsKeyDown(Keys.Escape))
         { Exit(); }
+
+        asThe(time);
 
         base.Update(gameTime);
     }
