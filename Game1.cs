@@ -36,7 +36,7 @@ public class Game1 : Game
     private Snowflake snowflake;
     private float limit = 1.0f;
 
-    private const string snow = " ftwzdcbae"; 
+    private const string snow = " ftwzdcbae";
     private Random random = new Random(0);
 
     private BasicEffect basicEffect;

@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.Timers;
 
 namespace objects; 
 
@@ -99,7 +97,7 @@ public class Snowflake
     {
         this.rotationX = 0f;
         this.rotationY = 0f;
-        
+
         this.position = Vector3.Zero;
 
         this.width = width + 2; // account for boundary edge
