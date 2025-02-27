@@ -1,0 +1,3 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"/home/lefler/Documents/gitRepos/SnowFlakesCodePoem/Content/File.spritefont","/home/lefler/Documents/gitRepos/SnowFlakesCodePoem/Content/bin/DesktopGL/File.xnb","FontDescriptionProcessor","SpriteFontContent",2019,37922,0.1647974
+"/home/lefler/Documents/gitRepos/SnowFlakesCodePoem/Content/white.png","/home/lefler/Documents/gitRepos/SnowFlakesCodePoem/Content/bin/DesktopGL/white.xnb","TextureProcessor","Texture2DContent",365,87701,0.0140849
