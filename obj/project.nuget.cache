@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "g+TAGnH4cEH3bbLTqGGn0lRvmQ3YQQ4MA9o25Pn16jKzUMvF5ygAP6VuK5aNcTTnC27K2YRJzRptSrgLD+NHUA==",
+  "dgSpecHash": "xpS3AMrvJmZ8hRF7oUFqTmUrIIebUEglI5Z2ksyKVoVGc5MqRm5K9iJ0iX5WasrCOP5h/RSJNfqjXQhxwa1Ktg==",
   "success": true,
   "projectFilePath": "/home/lefler/Documents/gitRepos/SnowFlakesCodePoem/SnowFlakesCodePoem.csproj",
   "expectedPackageFiles": [
@@ -10,7 +10,10 @@
     "/home/lefler/.nuget/packages/monogame.library.sdl/2.26.5.5/monogame.library.sdl.2.26.5.5.nupkg.sha512",
     "/home/lefler/.nuget/packages/nvorbis/0.10.4/nvorbis.0.10.4.nupkg.sha512",
     "/home/lefler/.nuget/packages/system.memory/4.5.3/system.memory.4.5.3.nupkg.sha512",
-    "/home/lefler/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512"
+    "/home/lefler/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512",
+    "/home/lefler/.nuget/packages/microsoft.netcore.app.runtime.win-x64/8.0.12/microsoft.netcore.app.runtime.win-x64.8.0.12.nupkg.sha512",
+    "/home/lefler/.nuget/packages/microsoft.aspnetcore.app.runtime.win-x64/8.0.12/microsoft.aspnetcore.app.runtime.win-x64.8.0.12.nupkg.sha512",
+    "/home/lefler/.nuget/packages/microsoft.netcore.app.host.win-x64/8.0.12/microsoft.netcore.app.host.win-x64.8.0.12.nupkg.sha512"
   ],
   "logs": []
 }
